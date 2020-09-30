@@ -7,6 +7,12 @@
     tools:context=".MainActivity">
 
     <com.autel.sdk.widget.AutelCodecView
+        android:id="@+id/codec_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.riis.autelevoiidemo.view.OverlayView
+        android:id="@+id/stream_view_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
