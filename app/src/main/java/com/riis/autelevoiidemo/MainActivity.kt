@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                     // Hides the on screen text view displaying "Drone not connected."
                     textView.visibility = View.INVISIBLE
                     // Makes a toast displaying the name of the connected drone
-                    Toast.makeText(applicationContext, p0.type.toString(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, getString(R.string.connected,  p0.type.toString()), Toast.LENGTH_LONG).show()
                     // Sets the drone reference returned from this function
                     currentProduct = p0
 
