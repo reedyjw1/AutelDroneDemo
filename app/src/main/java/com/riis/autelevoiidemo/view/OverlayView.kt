@@ -29,7 +29,6 @@ class OverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs)
         boxTextPaint.style = Paint.Style.FILL
 
         textPaint.color = Color.BLACK
-        textPaint.textSize = 12.0f
         textPaint.textAlign = Paint.Align.CENTER
     }
 
@@ -38,11 +37,21 @@ class OverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs)
 
         canvas?.let {
             boxes.forEach { box ->
+                val textBoxHeight = (.1 * (box.endY - box.startY)).toFloat()
+                val textBoxWidth = (box.endX - box.startX).toFloat()
+
+                val rectTextBoxTopY = box.startY
+                val rectTextBoxEndY = box.startY + textBoxHeight
+
                 val rect = RectF(box.startX, box.startY, box.endX, box.endY)
-                //val rectText = RectF(box.startX, box.startY+50, box.endX, box.startY)
+                val rectText = RectF(box.startX, rectTextBoxTopY, box.endX, rectTextBoxEndY)
+
+                val textSize = textBoxHeight * .6
+                textPaint.textSize = textSize.toFloat()
+
                 canvas.drawRect(rect, boxPaint)
-                //canvas.drawRect(rectText, boxTextPaint)
-                //canvas.drawText(title, box.startX, box.startY+25, textPaint)
+                canvas.drawRect(rectText, boxTextPaint)
+                canvas.drawText(title, box.startX + (.5 * textBoxWidth).toFloat(), box.startY + (.65 * textBoxHeight).toFloat(), textPaint)
             }
         }
     }

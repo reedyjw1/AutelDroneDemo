@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.drawToBitmap
@@ -26,16 +27,25 @@ import org.jetbrains.anko.doAsync
 
 
 class MainActivity : AppCompatActivity() {
+    // Drone
     private lateinit var currentProduct: BaseProduct
+
+    // Tensorflow Classifier
     private lateinit var classifier: ImageClassifier
+
+    // Views
     private lateinit var stream_view_overlay: OverlayView
     private lateinit var codec_view: AutelCodecView
+    private lateinit var textView: TextView
+
+    // Hnadler to capture view every 50 ms
     lateinit var mainHandler: Handler
 
+    // Calls function every 50ms to capture view from drone stream
     private val updateCaptureLoop = object: Runnable {
         override fun run() {
             captureBitmapLoop()
-            mainHandler.postDelayed(this, 200)
+            mainHandler.postDelayed(this, 50)
         }
     }
 
@@ -43,13 +53,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Initializes all relevant variables
         mainHandler = Handler(Looper.getMainLooper())
         classifier = ImageClassifier(application.assets)
         stream_view_overlay = findViewById(R.id.stream_view_overlay)
         codec_view = findViewById(R.id.codec_view)
+        textView = findViewById(R.id.textView)
 
-
+        // Creates SDK connection
         initSDK()
+        // Connects the app to the drone
         initProduct()
 
     }
@@ -76,15 +89,21 @@ class MainActivity : AppCompatActivity() {
     private fun initProduct() {
         Autel.setProductConnectListener(object: ProductConnectListener {
             override fun productConnected(p0: BaseProduct?) {
+                // If drone is connected to the remote
                 Log.i("productListener", "connected")
                 if (p0 != null) {
+                    // Hides the on screen text view displaying "Drone not connected."
+                    textView.visibility = View.INVISIBLE
+                    // Makes a toast displaying the name of the connected drone
                     Toast.makeText(applicationContext, p0.type.toString(), Toast.LENGTH_LONG).show()
+                    // Sets the drone reference returned from this function
                     currentProduct = p0
 
 
                 }
             }
 
+            // If drone is disconnected from the remote
             override fun productDisconnected() {
                 Log.i("productListener", "disconnected")
             }
@@ -93,7 +112,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun captureBitmapLoop(){
+        // Checks if the codec view is working
         if(codec_view.isAvailable){
+            // Captures the a bitmap from the view if possible
             codec_view.bitmap?.let {
                 processBitmap(it)
             }
@@ -105,8 +126,10 @@ class MainActivity : AppCompatActivity() {
     private fun processBitmap(bitmap: Bitmap) {
         doAsync {
             if(!classifier.processing){
+                // classifies the image and return the results
                 val results = classifier.classifyImage(bitmap)
-                //bitmap.recycle()
+
+                // draws the boxes and title on the "stream_view_overlay" for user to see
                 runOnUiThread {
                     Log.i("appInfo", results.title)
                     drawBoxes(results.boxes, results.title)
@@ -126,11 +149,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Starts the function that is called every 50 ms
         mainHandler.post(updateCaptureLoop)
     }
 
     override fun onPause() {
         super.onPause()
+        // Removes the handler callback to the function to
+        // prevent errors when entering and exiting the app
         mainHandler.removeCallbacks(updateCaptureLoop)
     }
 }
