@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
     private val updateCaptureLoop = object: Runnable {
         override fun run() {
             captureBitmapLoop()
-            mainHandler.postDelayed(this, 1)
+            mainHandler.postDelayed(this, 50)
         }
     }
 
