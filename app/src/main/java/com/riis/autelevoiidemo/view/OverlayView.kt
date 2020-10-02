@@ -12,7 +12,6 @@ import com.riis.autelevoiidemo.model.BoundingBox
 class OverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     var boxes: List<BoundingBox> = mutableListOf()
-    lateinit var title: String
     private var boxPaint = Paint()
     private var textPaint = Paint()
     private var boxTextPaint = Paint()
@@ -51,7 +50,7 @@ class OverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs)
 
                 canvas.drawRect(rect, boxPaint)
                 canvas.drawRect(rectText, boxTextPaint)
-                canvas.drawText(title, box.startX + (.5 * textBoxWidth).toFloat(), box.startY + (.65 * textBoxHeight).toFloat(), textPaint)
+                canvas.drawText(box.title, box.startX + (.5 * textBoxWidth).toFloat(), box.startY + (.65 * textBoxHeight).toFloat(), textPaint)
             }
         }
     }

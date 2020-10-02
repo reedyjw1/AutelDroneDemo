@@ -19,11 +19,10 @@ class ImageClassifier(assetManager: AssetManager) {
      *
      * @post { box.confidence >= 0.55 | box \in result }
      */
-    fun classifyImage(image: Bitmap): ObjectInformation{
+    fun classifyImage(image: Bitmap): MutableList<BoundingBox> {
         processing = true
 
         val result = mutableListOf<BoundingBox>()
-        var returnResult = ObjectInformation(result, "0")
         val detections = (detectionModel as TFLiteObjectDetectionAPIModel)
             .recognizeImageWithResolution(image, image.width, image.height)
 
@@ -32,12 +31,12 @@ class ImageClassifier(assetManager: AssetManager) {
                 val box = BoundingBox(detection.location.left,
                     detection.location.top,
                     detection.location.right,
-                    detection.location.bottom)
+                    detection.location.bottom,
+                    detection.title)
                 result.add(box)
-                returnResult = ObjectInformation(result, detection.title)
             }
         processing = false
-        return returnResult
+        return result
     }
 
 }

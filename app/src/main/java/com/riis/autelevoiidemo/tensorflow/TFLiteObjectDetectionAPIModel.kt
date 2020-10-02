@@ -4,6 +4,7 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.RectF
 import android.os.Trace
+import android.util.Log
 import org.tensorflow.lite.Interpreter
 import java.io.*
 import java.nio.ByteBuffer

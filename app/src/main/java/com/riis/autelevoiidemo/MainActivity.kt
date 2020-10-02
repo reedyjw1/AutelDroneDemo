@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
     private val updateCaptureLoop = object: Runnable {
         override fun run() {
             captureBitmapLoop()
-            mainHandler.postDelayed(this, 50)
+            mainHandler.postDelayed(this, 1)
         }
     }
 
@@ -131,8 +131,7 @@ class MainActivity : AppCompatActivity() {
 
                 // draws the boxes and title on the "stream_view_overlay" for user to see
                 runOnUiThread {
-                    Log.i("appInfo", results.title)
-                    drawBoxes(results.boxes, results.title)
+                    drawBoxes(results)
                 }
 
             }
@@ -140,9 +139,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun drawBoxes(boxes: List<BoundingBox>, title: String) {
+    private fun drawBoxes(boxes: List<BoundingBox>) {
         stream_view_overlay.boxes = boxes
-        stream_view_overlay.title = title
         stream_view_overlay.invalidate()
 
     }
